@@ -1,7 +1,7 @@
 """
 The desktop main class.
 
-This class creates the GUI using Tkinter.
+Created by Jaydon Walters
 """
 
 from downloader import *
