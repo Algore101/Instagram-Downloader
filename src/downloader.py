@@ -1,7 +1,7 @@
 """
-This code is used to download Instagram posts.
+This library is an extension of instagramy, used to download public Instagram content
 
-It makes use of the instagramy library for the downloading, but contains additional functions for ease of use.
+Created by Jaydon Walters
 """
 
 import logging

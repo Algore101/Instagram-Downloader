@@ -210,10 +210,11 @@ class DesktopApp(tk.Tk):
             self.audio_only_checkbox.grid_remove()
             self.audio_type_selection.grid_remove()
 
-    def issue_notice(self, show: bool = True) -> None:
-        warning_message = "This application is still under development. This means that there are bugs and errors " \
-                          "that could occur. In the event of a bug/error, try restarting the application. If that " \
-                          "doesn't work then feel free to contact me."
+    # TODO: Add notice on startup
+    # def issue_notice(self, show: bool = True) -> None:
+    #     warning_message = "This application is still under development. This means that there are bugs and errors " \
+    #                       "that could occur. In the event of a bug/error, try restarting the application. If that " \
+    #                       "doesn't work then feel free to contact me."
 
 
 if __name__ == '__main__':
