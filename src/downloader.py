@@ -44,10 +44,8 @@ def convert_video_to_audio(video_path, output_ext="mp3", delete_video: bool = Fa
 def get_post_code(url: str) -> str:
     """
     Fetch the post code from the URL
-    :param url: The URL of the post
+    :param url: The post URL
     :return: The code identifying the Instagram post
-
-    TODO: Implement regular expressions
     """
     # Split URL
     url_list = url.split("/")
@@ -58,11 +56,10 @@ def get_post_code(url: str) -> str:
         raise Exception("Link is not an Instagram link")
 
     # Check for type of post
-    if url_list[2] == "p" or url_list[2] == "reel":
-        logging.debug("URL is valid. Fetching ID...")
-    else:
+    if url_list[2] != "p" or url_list[2] != "reel":
         raise Exception("Invalid Instagram link")
 
+    logging.debug("URL is valid. Fetching ID...")
     return url_list[3]
 
 
@@ -93,7 +90,7 @@ def get_media_type(url: str) -> str:
         raise TypeError(f"Unsupported file type: {post.type_of_post}")
 
 
-def download_instagram_post(url: str, filepath: str = DOWNLOADS_FOLDER, extension: str = None) -> bool:
+def download_instagram_post(url: str, filepath: str = DOWNLOADS_FOLDER, extension: str = None) -> None:
     """
     Downloads an Instagram post
     :param url: The URL of the post
