@@ -4,7 +4,7 @@ The desktop main class.
 Created by Jaydon Walters
 """
 
-from downloader import *
+import downloader
 import logging
 import tkinter as tk
 from tkinter import filedialog
@@ -57,6 +57,9 @@ class DesktopApp(tk.Tk):
         self.clear_url_button = None
         self.get_post_button = None
 
+        # Toggleable labels
+        self.ready_label = None
+
         # Create GUI
         self.create_gui()
 
@@ -95,6 +98,9 @@ class DesktopApp(tk.Tk):
         self.audio_type_selection = ttk.OptionMenu(self.main_frame, self.selected_audio_type, self.audio_types[0],
                                                    *self.audio_types)
 
+        # Create "ready to download" label
+        self.ready_label = tk.Label(self.main_frame, text="Post is ready to be downloaded!")
+
         # Create download button
         self.download_button = ttk.Button(self.main_frame, text="DOWNLOAD", command=self.download, state="disabled")
 
@@ -116,13 +122,15 @@ class DesktopApp(tk.Tk):
         self.get_post_button.grid(column=0, row=3, columnspan=3)  # Get post button
         self.audio_only_checkbox.grid(column=0, row=4, columnspan=2)  # Audio only checkbox
         self.audio_type_selection.grid(column=2, row=4)  # Audio type dropdown menu
-        self.download_button.grid(column=0, row=5, columnspan=3)  # Download button
+        self.ready_label.grid(column=0, row=5, columnspan=3)    # "Ready to download" message
+        self.download_button.grid(column=0, row=6, columnspan=3)  # Download button
 
         # Hide widgets
         self.audio_only_checkbox.grid_remove()
         self.audio_only_checkbox.config(state="disabled")
         self.audio_type_selection.grid_remove()
         self.audio_type_selection.config(state="disabled")
+        self.ready_label.grid_remove()
 
     def browse_directory(self) -> str:
         """
@@ -137,14 +145,10 @@ class DesktopApp(tk.Tk):
         """
         Prepare the post for download
 
-        TODO: Notify that post is available for download
         TODO: Add low-res image preview
         """
-        # Get URL
-        url = self.url.get()
-
         # Display download options based on the file type
-        if get_media_type(url) == "mp4":
+        if downloader.get_media_type(self.url.get()) == "mp4":
             # Show "audio only" checkbox
             self.audio_only_checkbox.config(state="normal")
             self.audio_only_checkbox.grid()
@@ -157,6 +161,8 @@ class DesktopApp(tk.Tk):
             # Hide audio selector dropdown
             self.audio_type_selection.grid_remove()
 
+        # Display "ready to download" message
+        self.ready_label.grid()
         # Enable download button
         self.download_button.config(state="normal")
 
@@ -189,10 +195,10 @@ class DesktopApp(tk.Tk):
             if self.audio_only_checkbox["state"] == "normal" and self.audio_only.get() == 1:
                 logging.debug("Downloading audio (%s) only...", self.selected_audio_type.get())
                 # Download audio only
-                download_instagram_post(url, filepath, self.selected_audio_type.get())
+                downloader.download_instagram_post(url, filepath, self.selected_audio_type.get())
             else:
                 logging.debug("Downloading video/audio...")
-                download_instagram_post(url, filepath)
+                downloader.download_instagram_post(url, filepath)
             tk.messagebox.showinfo("Success!", "File successfully downloaded.")
             # Reset screen
             self.clear_input_contents()
@@ -208,6 +214,10 @@ class DesktopApp(tk.Tk):
         if widget is None:
             self.url.set("")
             self.directory.set("")
+            # Remove ready message
+            self.ready_label.grid_remove()
+            # Focus on URL entry
+            self.url_input.focus_set()
         else:
             widget.set("")
 
