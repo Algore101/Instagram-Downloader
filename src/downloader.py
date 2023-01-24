@@ -29,16 +29,13 @@ def convert_video_to_audio(video_path, output_ext="mp3", delete_video: bool = Fa
     logging.debug("Extracting audio from file...")
     filename, extension = os.path.splitext(video_path)
     # Create audio file
-    clip = VideoFileClip(video_path)
-    clip.audio.write_audiofile(f"{filename}.{output_ext}")
-
-    # Wait before deleting file
-    time.sleep(1)
+    with VideoFileClip(video_path) as clip:
+        clip.audio.write_audiofile(f"{filename}.{output_ext}")
 
     # Delete video
-    # if os.path.exists(filename) and delete_video:
-    #     logging.debug("Deleting video file...")
-    #     os.remove(video_path)
+    if os.path.exists(video_path) and delete_video:
+        logging.debug("Deleting video file...")
+        os.remove(video_path)
 
 
 def get_post_code(url: str) -> str:
@@ -116,6 +113,8 @@ def download_instagram_post(url: str, filepath: str = DOWNLOADS_FOLDER, extensio
     # Check if file is audio
     if extension == "wav" or extension == "mp3":
         convert_video_to_audio(str(Path(filepath) / file_name), output_ext=extension, delete_video=True)
+        # Change extension back to selected extension
+        file_name = f"{post.author}_{post.post_id}.{extension}"
 
     # Check for file
     if os.path.exists(str(Path(filepath) / file_name)):

@@ -180,8 +180,6 @@ class DesktopApp(tk.Tk):
     def download(self) -> None:
         """
         Fetch the URL and directory from input fields and attempt to download the Instagram post
-
-        TODO: Delete video after audio extraction
         """
         # Get URL
         url = self.url_input.get()
