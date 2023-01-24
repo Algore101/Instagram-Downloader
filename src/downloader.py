@@ -46,6 +46,8 @@ def get_post_code(url: str) -> str:
     Fetch the post code from the URL
     :param url: The URL of the post
     :return: The code identifying the Instagram post
+
+    TODO: Implement regular expressions
     """
     # Split URL
     url_list = url.split("/")
