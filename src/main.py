@@ -17,6 +17,14 @@ logging.basicConfig(level=logging.DEBUG)
 class DesktopApp(tk.Tk):
     """
     A Tk object for the GUI.
+
+    TODO: Implement a startup check to see if Instagram is responding
+    TODO: Implement multithreading when downloading posts
+    TODO: Allow download from carousels
+    TODO: Improve GUI layout
+    TODO: Change theme
+    TODO: Add "Paste from clipboard" button
+    TODO: Add button icons
     """
 
     def __init__(self):
@@ -128,6 +136,9 @@ class DesktopApp(tk.Tk):
     def get_post(self) -> None:
         """
         Prepare the post for download
+
+        TODO: Notify that post is available for download
+        TODO: Add low-res image preview
         """
         # Get URL
         url = self.url.get()
@@ -163,6 +174,8 @@ class DesktopApp(tk.Tk):
     def download(self) -> None:
         """
         Fetch the URL and directory from input fields and attempt to download the Instagram post
+
+        TODO: Delete video after audio extraction
         """
         # Get URL
         url = self.url_input.get()
