@@ -56,7 +56,7 @@ def get_post_code(url: str) -> str:
         raise Exception("Link is not an Instagram link")
 
     # Check for type of post
-    if url_list[2] != "p" or url_list[2] != "reel":
+    if url_list[2] != "p" and url_list[2] != "reel":
         raise Exception("Invalid Instagram link")
 
     logging.debug("URL is valid. Fetching ID...")
