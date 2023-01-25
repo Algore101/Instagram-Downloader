@@ -4,17 +4,13 @@ This library is an extension of instagramy, used to download public Instagram co
 Created by Jaydon Walters
 """
 
-import logging
 import os
-import time
-
 from instagramy.plugins.download import download_post
 from instagramy import InstagramPost
 from pathlib import Path
 from moviepy.editor import VideoFileClip
 
 # Constants
-# SESSION_ID = os.environ.get("PASTE_YOUR_SESSION_ID_HERE")
 DOWNLOADS_FOLDER = str(Path.home() / "Downloads")
 
 
@@ -26,15 +22,13 @@ def convert_video_to_audio(video_path, output_ext="mp3", delete_video: bool = Fa
     :param delete_video: Whether to delete the original file
     """
     # Remove the extension of the video
-    logging.debug("Extracting audio from file...")
-    filename, extension = os.path.splitext(video_path)
+    filename, _ = os.path.splitext(video_path)
     # Create audio file
     with VideoFileClip(video_path) as clip:
         clip.audio.write_audiofile(f"{filename}.{output_ext}")
 
     # Delete video
     if os.path.exists(video_path) and delete_video:
-        logging.debug("Deleting video file...")
         os.remove(video_path)
 
 
@@ -56,7 +50,6 @@ def get_post_code(url: str) -> str:
     if url_list[2] != "p" and url_list[2] != "reel":
         raise Exception("Invalid Instagram link")
 
-    logging.debug("URL is valid. Fetching ID...")
     return url_list[3]
 
 
@@ -93,10 +86,11 @@ def download_instagram_post(url: str, filepath: str = DOWNLOADS_FOLDER, extensio
     :param url: The URL of the post
     :param filepath: The location to download the file to
     :param extension: The file extension of the post. If left blank, the extension is automatically determined
-    :return: True if file has downloaded successfully, False otherwise
+    :return: `True` if file has downloaded successfully, `False` otherwise
     """
     post = get_post_object(url)
     if extension is None:
+        # Automatically determine extension
         file_name = f"{post.author}_{post.post_id}.{get_media_type(url)}"
     elif extension == "wav" or extension == "mp3":
         # Keep file as mp4 and convert after downloading
@@ -107,7 +101,6 @@ def download_instagram_post(url: str, filepath: str = DOWNLOADS_FOLDER, extensio
     # Download file
     if filepath == "":
         filepath = DOWNLOADS_FOLDER
-    logging.debug("Downloading %s to path %s...", file_name, filepath)
     download_post(post.post_id, filepath=f"{(Path(filepath) / file_name)}")
 
     # Check if file is audio
@@ -117,8 +110,5 @@ def download_instagram_post(url: str, filepath: str = DOWNLOADS_FOLDER, extensio
         file_name = f"{post.author}_{post.post_id}.{extension}"
 
     # Check for file
-    if os.path.exists(str(Path(filepath) / file_name)):
-        logging.debug("File downloaded successfully!")
-    else:
-        logging.debug("An unexpected error occurred.")
+    if not os.path.exists(str(Path(filepath) / file_name)):
         raise FileExistsError("An unexpected error occurred")
