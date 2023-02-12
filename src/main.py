@@ -88,7 +88,7 @@ class DesktopApp(tk.Tk):
         # Download options widgets - Creation
         self.options_frame = tk.Frame(self, padx=20, pady=5)
         self.directory_sv = tk.StringVar()
-        self.directory_sv.trace_add("write", self.make_get_button_available)
+        self.directory_sv.trace_add("write", self.make_download_button_available)
         self.dir_input = ttk.Entry(self.options_frame, width=50, textvariable=self.directory_sv)
         self.browse_button = ttk.Button(self.options_frame, text="Browse", command=self.browse_directory)
         self.audio_only_iv = tk.IntVar()
@@ -109,7 +109,7 @@ class DesktopApp(tk.Tk):
 
         # Download post widgets - Creation
         self.download_frame = tk.Frame(self, padx=20, pady=5)
-        self.download_button = ttk.Button(self.download_frame, text="DOWNLOAD", command=self.download, state="disabled")
+        self.download_button = ttk.Button(self.download_frame, text="DOWNLOAD", command=self.download)
 
         # Download post widgets - Layout
         self.download_frame.grid(row=3, column=0)
@@ -134,24 +134,20 @@ class DesktopApp(tk.Tk):
 
         TODO: Add low-res image preview
         """
-        # Display download options based on the file type
-        if downloader.get_media_type(self.url_sv.get()) == "mp4":
-            # Show "audio only" checkbox
-            self.audio_only_checkbox.config(state="normal")
-            self.audio_only_checkbox.grid()
-            # Show audio selector dropdown
-            self.audio_type_selection.grid()
-        else:
-            # Hide "audio only" checkbox
-            self.audio_only_checkbox.grid_remove()
-            self.audio_only_checkbox.config(state="disabled")
-            # Hide audio selector dropdown
-            self.audio_type_selection.grid_remove()
-
-        # Display "ready to download" message
-        self.ready_label.grid()
-        # Enable download button
-        self.download_button.config(state="normal")
+        try:
+            if downloader.get_media_type(self.url_sv.get()) == "mp4":
+                # Enable audio conversion options
+                self.audio_only_checkbox.config(state="normal")
+                self.audio_type_selection.config(state="normal")
+            else:
+                # Disable audio conversion options
+                self.audio_only_checkbox.config(state="disabled")
+                self.audio_type_selection.config(state="disabled")
+            # Enable download options
+            self.options_frame.grid()
+        except TypeError:
+            print("We ran into an error. If you're reading this and you are the developer, fix it. If not, "
+                  "then please let me know because I'm stupid and missed this part.")
 
     def toggle_audio_type_selector(self) -> None:
         """
@@ -197,26 +193,31 @@ class DesktopApp(tk.Tk):
         :return: None
         """
         if widget is None:
+            # Clear entry fields
             self.url_sv.set("")
             self.directory_sv.set("")
-            # Remove ready message
-            self.ready_label.grid_remove()
             # Focus on URL entry
             self.url_input.focus_set()
         else:
             widget.set("")
 
     def make_get_button_available(self, *args) -> None:
-        if self.url_sv.get() != "" and self.directory_sv.get() != "":
+        if self.url_sv.get() != "":
             # Enable get post button
             self.get_post_button.config(state="normal")
         else:
-            # Disable buttons
+            # Disable widgets
             self.get_post_button.config(state="disabled")
-            self.download_button.config(state="disabled")
-            # Hide other options
-            self.audio_only_checkbox.grid_remove()
-            self.audio_type_selection.grid_remove()
+            self.options_frame.grid_remove()
+            self.download_frame.grid_remove()
+
+    def make_download_button_available(self, *args) -> None:
+        if self.directory_sv.get() != "":
+            # Enable download widgets
+            self.download_frame.grid()
+        else:
+            # Disable download widgets
+            self.download_frame.grid_remove()
 
     # TODO: Add notice on startup
     # def issue_notice(self, show: bool = True) -> None:
